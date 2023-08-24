@@ -5,12 +5,12 @@ import (
 	"github.com/lishimeng/app-starter"
 	"github.com/lishimeng/app-starter/tool"
 	"github.com/lishimeng/go-log"
-	"github.com/ryker-w/go-crontab/internal/common"
+	common2 "github.com/ryker-w/go-crontab/common"
 	"github.com/ryker-w/go-crontab/internal/schedule"
 )
 
 func responseInstanceTaskApi(ctx iris.Context) {
-	var req common.CallElement
+	var req common2.CallElement
 	var resp app.Response
 	err := ctx.ReadJSON(&req)
 	if err != nil {
@@ -19,10 +19,10 @@ func responseInstanceTaskApi(ctx iris.Context) {
 		tool.ResponseJSON(ctx, resp)
 		return
 	}
-	if req.HandleCode == common.Success {
+	if req.HandleCode == common2.Success {
 		log.Info("任务执行成功【%s】", req.ExecutorHandler)
 		schedule.Sch.CallbackJob(req)
-	} else if req.HandleCode == common.NotFount {
+	} else if req.HandleCode == common2.NotFount {
 		log.Info("任务未执行【%s】", req.ExecutorHandler)
 		schedule.Sch.CallbackJob(req)
 	} else {

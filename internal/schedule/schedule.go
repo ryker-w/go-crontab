@@ -3,7 +3,7 @@ package schedule
 import (
 	"github.com/lishimeng/go-log"
 	"github.com/robfig/cron/v3"
-	"github.com/ryker-w/go-crontab/internal/common"
+	common2 "github.com/ryker-w/go-crontab/common"
 	"github.com/ryker-w/go-crontab/internal/db/repo"
 )
 
@@ -11,7 +11,7 @@ type Schedule interface {
 	Init()                                                                   // 初始化定时任务
 	AddJob(jobId string, executorHandler string, spec string, remote string) // 动态添加定时任务
 	DelJob(jobId string)                                                     // 动态删除定时任务
-	CallbackJob(element common.CallElement)                                  // 定时任务结果回调
+	CallbackJob(element common2.CallElement)                                 // 定时任务结果回调
 }
 
 type schedule struct {
@@ -62,7 +62,7 @@ func (s *schedule) addJob(jobId string, executorHandler string, spec string, cli
 	s.jobList.Set(jobId, &j)
 }
 
-func (s *schedule) callbackJob(callElement common.CallElement) {
+func (s *schedule) callbackJob(callElement common2.CallElement) {
 	j := s.jobList.Get(callElement.JobId)
 	if j == nil {
 		return
@@ -77,7 +77,7 @@ func (s *schedule) callbackJob(callElement common.CallElement) {
 		return
 	}
 	// TODO 无执行函数，取消任务
-	if callElement.HandleCode == common.NotFount {
+	if callElement.HandleCode == common2.NotFount {
 		s.delJob(callElement.JobId)
 		err = repo.CancelTaskByJobId(callElement.JobId)
 		if err != nil {
@@ -98,7 +98,7 @@ func (s *schedule) AddJob(jobId string, executorHandler string, spec string, rem
 	s.addJob(jobId, executorHandler, spec, remote)
 }
 
-func (s *schedule) CallbackJob(callElement common.CallElement) () {
+func (s *schedule) CallbackJob(callElement common2.CallElement) () {
 	s.callbackJob(callElement)
 }
 

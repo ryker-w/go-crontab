@@ -1,6 +1,8 @@
 package executor
 
-import "github.com/ryker-w/go-crontab/internal/common"
+import (
+	common2 "github.com/ryker-w/go-crontab/common"
+)
 
 // Executor 执行器
 type Executor interface {
@@ -10,7 +12,7 @@ type Executor interface {
 	// RegTask 服务器注册
 	RegTask() (err error)
 	// GetTaskInstance 获取调度任务实例
-	GetTaskInstance() common.RunReq
+	GetTaskInstance() common2.RunReq
 	// RunTask 运行任务
-	RunTask(req common.RunReq) common.CallElement
+	RunTask(req common2.RunReq) common2.CallElement
 }

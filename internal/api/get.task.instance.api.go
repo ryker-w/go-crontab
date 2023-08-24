@@ -5,12 +5,12 @@ import (
 	"github.com/lishimeng/app-starter"
 	"github.com/lishimeng/app-starter/tool"
 	"github.com/lishimeng/go-log"
-	"github.com/ryker-w/go-crontab/internal/common"
+	common2 "github.com/ryker-w/go-crontab/common"
 	"github.com/ryker-w/go-crontab/internal/db/model"
 )
 
 func getInstanceTaskApi(ctx iris.Context) {
-	var resp common.ScheduleResponse
+	var resp common2.ScheduleResponse
 	clientId := ctx.Params().Get("clientId")
 
 	var rt model.OtterBatchRunningTask
@@ -38,7 +38,7 @@ func getInstanceTaskApi(ctx iris.Context) {
 		tool.ResponseJSON(ctx, resp)
 		return
 	}
-	resp.Data = common.RunReq{
+	resp.Data = common2.RunReq{
 		JobID:           rt.JobId,
 		ExecutorHandler: rt.ExecutorHandler,
 		InstanceId:      rt.Id,

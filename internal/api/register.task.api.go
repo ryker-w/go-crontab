@@ -6,12 +6,12 @@ import (
 	"github.com/lishimeng/app-starter/tool"
 	"github.com/lishimeng/go-log"
 	persistence "github.com/lishimeng/go-orm"
-	"github.com/ryker-w/go-crontab/internal/common"
+	common2 "github.com/ryker-w/go-crontab/common"
 	"github.com/ryker-w/go-crontab/internal/db/model"
 )
 
 func RegisterTaskApi(ctx iris.Context) {
-	var req common.RegReq
+	var req common2.RegReq
 	var resp app.Response
 	err := ctx.ReadJSON(&req)
 	if err != nil {

@@ -9,7 +9,7 @@ import (
 	"github.com/lishimeng/app-starter"
 	"github.com/lishimeng/app-starter/tool"
 	"github.com/lishimeng/go-log"
-	"github.com/ryker-w/go-crontab/internal/common"
+	common2 "github.com/ryker-w/go-crontab/common"
 	"io"
 	"net/http"
 	"net/url"
@@ -77,12 +77,12 @@ func (e *executor) RegTask() (err error) {
 }
 
 func (e *executor) regTask() (err error) {
-	req := common.RegReq{
+	req := common2.RegReq{
 		ClientId: e.clientId,
 		Handlers: e.regList.GetKeys(),
 	}
-	var requestUrl = e.buildRemoteUrl(common.RouteRegTaskTpl)
-	client := &http.Client{Timeout: common.HttpDefaultTimeout}
+	var requestUrl = e.buildRemoteUrl(common2.RouteRegTaskTpl)
+	client := &http.Client{Timeout: common2.HttpDefaultTimeout}
 	jsonStr, _ := json.Marshal(req)
 	resp, err := client.Post(requestUrl, "application/json", bytes.NewBuffer(jsonStr))
 	if err != nil {
@@ -108,22 +108,22 @@ func (e *executor) regTask() (err error) {
 	return
 }
 
-func (e *executor) GetTaskInstance() common.RunReq {
+func (e *executor) GetTaskInstance() common2.RunReq {
 	return e.getTaskInstance()
 }
 
 // RunTask 运行任务
-func (e *executor) RunTask(req common.RunReq) common.CallElement {
+func (e *executor) RunTask(req common2.RunReq) common2.CallElement {
 	return e.runTask(req)
 }
 
 //运行一个任务
-func (e *executor) runTask(req common.RunReq) common.CallElement {
+func (e *executor) runTask(req common2.RunReq) common2.CallElement {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	// 本地执行
 	if !e.regList.Exists(req.ExecutorHandler) {
-		return common.Callback(req, common.NotFount, fmt.Sprintf("任务[ %d ]没有注册: %s", req.JobID, req.ExecutorHandler))
+		return common2.Callback(req, common2.NotFount, fmt.Sprintf("任务[ %d ]没有注册: %s", req.JobID, req.ExecutorHandler))
 	}
 	task := e.regList.Get(req.ExecutorHandler)
 	task.Id = req.JobID
@@ -140,26 +140,26 @@ func (e *executor) runTask(req common.RunReq) common.CallElement {
 	return task.Run()
 }
 
-func (e *executor) getTaskInstance() common.RunReq {
-	var requestUrl = e.buildRemoteUrl(common.RouteScheduleTpl)
-	client := &http.Client{Timeout: common.HttpDefaultTimeout}
+func (e *executor) getTaskInstance() common2.RunReq {
+	var requestUrl = e.buildRemoteUrl(common2.RouteScheduleTpl)
+	client := &http.Client{Timeout: common2.HttpDefaultTimeout}
 	resp, err := client.Get(requestUrl)
 	if err != nil {
 		log.Info("client Post err")
 		log.Info(err)
-		return common.RunReq{}
+		return common2.RunReq{}
 	}
 	defer func(Body io.ReadCloser) {
 		_ = Body.Close()
 	}(resp.Body)
 
 	result, _ := io.ReadAll(resp.Body)
-	var response common.ScheduleResponse
+	var response common2.ScheduleResponse
 	err = json.Unmarshal(result, &response)
 	if err != nil {
 		log.Info("response Unmarshal err")
 		log.Info(err)
-		return common.RunReq{}
+		return common2.RunReq{}
 	}
 	return response.Data
 }
@@ -169,9 +169,9 @@ func (e *executor) buildRemoteUrl(routePath string) string {
 	return requestUrl
 }
 
-func (e *executor) response(callElement common.CallElement) error {
-	var requestUrl = e.buildRemoteUrl(common.RouteScheduleTpl)
-	client := &http.Client{Timeout: common.HttpDefaultTimeout}
+func (e *executor) response(callElement common2.CallElement) error {
+	var requestUrl = e.buildRemoteUrl(common2.RouteScheduleTpl)
+	client := &http.Client{Timeout: common2.HttpDefaultTimeout}
 	jsonStr, _ := json.Marshal(callElement)
 	resp, err := client.Post(requestUrl, "application/json", bytes.NewBuffer(jsonStr))
 	if err != nil {

@@ -4,7 +4,7 @@ import (
 	"github.com/lishimeng/app-starter"
 	"github.com/lishimeng/go-log"
 	persistence "github.com/lishimeng/go-orm"
-	"github.com/ryker-w/go-crontab/internal/common"
+	common2 "github.com/ryker-w/go-crontab/common"
 	"github.com/ryker-w/go-crontab/internal/db/model"
 	"time"
 )
@@ -23,7 +23,7 @@ func GetActiveTasks() (sum int, tasks []model.OtterBatchTask, err error) {
 	return
 }
 
-func HandleTaskResult(callElement common.CallElement, nextTime time.Time) (err error) {
+func HandleTaskResult(callElement common2.CallElement, nextTime time.Time) (err error) {
 	// TODO 添加任务记录
 	task, err := FindTaskByJobId(callElement.JobId)
 	if err != nil {

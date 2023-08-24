@@ -7,7 +7,7 @@ import (
 var exec Executor
 
 // NewExecutor 创建执行器
-func NewExecutor(ctx context.Context, options ...Option) {
+func NewExecutor(ctx context.Context, options ...Option) (err error) {
 	e := &executor{
 		ctx: ctx,
 		regList: &ListTask{
@@ -20,10 +20,11 @@ func NewExecutor(ctx context.Context, options ...Option) {
 	for _, o := range options {
 		o(e)
 	}
-	err := e.Run()
+	err = e.Run()
 	if err != nil {
 		return
 	}
+	return
 }
 
 type Option func(e *executor)

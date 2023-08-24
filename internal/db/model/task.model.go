@@ -15,6 +15,7 @@ type OtterBatchTask struct {
 	Spec            string    `orm:"column(spec);null"`                     // cron表达式
 	PrevTime        time.Time `orm:"column(prev_time);type(datetime);null"` // 上次执行时间
 	NextTime        time.Time `orm:"column(next_time);type(datetime);null"` // 下次执行时间
+	MaxInstanceNum  int       `orm:"column(max_instance_num);default(10)"`  // 最大可执行实例限制
 	app.TableChangeInfo
 }
 
@@ -23,7 +24,7 @@ const (
 	Inactive = 20 // 系统状态：未激活
 )
 
-func (t *OtterBatchRunningTask) TableUnique() [][]string {
+func (t *OtterBatchTask) TableUnique() [][]string {
 	return [][]string{
 		{"ClientId", "ExecutorHandler"},
 	}

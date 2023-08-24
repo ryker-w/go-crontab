@@ -6,11 +6,5 @@ user = "iot"
 password = "thingple"
 host = "127.0.0.1"
 port = 5432
-database = "iot"
+database = "crontab"
 ssl = "disable" #require/verify-full/verify-ca/disable
-
-[file]
-TemplateFilePath = "template"
-StorageFilePath = "template"
-#ConvertURL = "http://ows.thingplecloud.com:82/fc/office2pdf"
-ConvertURL = "http://localhost:81/api/office2pdf"

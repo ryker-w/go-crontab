@@ -56,6 +56,7 @@ func (e *executor) AddRegTask(handler string, task FuncTask) {
 	}
 	var t = &Task{}
 	t.fn = task
+	t.Name = handler
 	e.regList.Set(handler, t)
 	log.Info("执行器注册本地任务：%s", handler)
 }
@@ -65,8 +66,7 @@ func (e *executor) RegTask() (err error) {
 	if len(e.clientId) == 0 {
 		return errors.New("clientId 不能为空")
 	}
-	if e.regList == nil || e.runList.Len() == 0 {
-		log.Info("无本地任务，取消远程注册")
+	if e.regList == nil || e.regList.Len() == 0 {
 		return
 	}
 	err = e.regTask()
@@ -102,8 +102,8 @@ func (e *executor) regTask() (err error) {
 		log.Info(err)
 		return
 	}
-	if response.Code != int64(tool.RespCodeSuccess) {
-		return errors.New(fmt.Sprintf("注册失败, response code err: %d", response.Code))
+	if response.Code != float64(tool.RespCodeSuccess) {
+		return errors.New(fmt.Sprintf("注册失败, response code err: %v", response.Code))
 	}
 	return
 }
@@ -123,7 +123,7 @@ func (e *executor) runTask(req common.RunReq) common.CallElement {
 	defer e.mu.Unlock()
 	// 本地执行
 	if !e.regList.Exists(req.ExecutorHandler) {
-		return common.Callback(req, common.Error, fmt.Sprintf("任务[ %d ]没有注册: %s", req.JobID, req.ExecutorHandler))
+		return common.Callback(req, common.NotFount, fmt.Sprintf("任务[ %d ]没有注册: %s", req.JobID, req.ExecutorHandler))
 	}
 	task := e.regList.Get(req.ExecutorHandler)
 	task.Id = req.JobID
@@ -191,7 +191,7 @@ func (e *executor) response(callElement common.CallElement) error {
 		log.Info(err)
 		return err
 	}
-	if response.Code != int64(tool.RespCodeSuccess) {
+	if response.Code != float64(tool.RespCodeSuccess) {
 		return errors.New(fmt.Sprintf("response err code:%d", response.Code))
 	}
 	return nil
@@ -211,20 +211,12 @@ func (e *executor) run() {
 			case <-timer.C:
 				req := e.GetTaskInstance()
 				log.Info("GetTaskInstance: %+v", req)
-				if req.InstanceId == 0 {
-					callElement := common.Callback(req, common.NotFount, "")
+				if req.InstanceId != 0 {
+					callElement := e.RunTask(req)
 					err := e.response(callElement)
 					if err != nil {
 						log.Info(err)
-						return
 					}
-					return
-				}
-				callElement := e.RunTask(req)
-				err := e.response(callElement)
-				if err != nil {
-					log.Info(err)
-					return
 				}
 				timer.Reset(duration)
 			}

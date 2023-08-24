@@ -64,6 +64,9 @@ func (s *schedule) addJob(jobId string, executorHandler string, spec string, cli
 
 func (s *schedule) callbackJob(callElement common.CallElement) {
 	j := s.jobList.Get(callElement.JobId)
+	if j == nil {
+		return
+	}
 	entry := s.cron.Entry(j.entryID)
 	j.nextTime = entry.Next
 	s.jobList.Set(callElement.JobId, j)

@@ -1,6 +1,8 @@
 package executor
 
-import "sync"
+import (
+	"sync"
+)
 
 //ListTask 任务列表 [JobID]执行函数,并行执行时[+LogID]
 type ListTask struct {

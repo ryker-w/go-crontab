@@ -11,7 +11,9 @@ type Schedule interface {
 	Init()                                                                   // 初始化定时任务
 	AddJob(jobId string, executorHandler string, spec string, remote string) // 动态添加定时任务
 	DelJob(jobId string)                                                     // 动态删除定时任务
-	CallbackJob(element common2.CallElement)                                 // 定时任务结果回调
+	ExistJob(jobId string) bool
+	CallbackJob(element common2.CallElement) // 定时任务结果回调
+	GetJob(jobId string) *job
 }
 
 type schedule struct {
@@ -89,6 +91,9 @@ func (s *schedule) callbackJob(callElement common2.CallElement) {
 
 func (s *schedule) delJob(jobId string) {
 	j := s.jobList.Get(jobId)
+	if j == nil {
+		return
+	}
 	log.Info("[schedule]删除定时任务: %s, %s", j.jobId, j.handler)
 	s.cron.Remove(j.entryID)
 	s.jobList.Del(jobId)
@@ -104,4 +109,15 @@ func (s *schedule) CallbackJob(callElement common2.CallElement) () {
 
 func (s *schedule) DelJob(jobId string) {
 	s.delJob(jobId)
+}
+
+func (s *schedule) ExistJob(jobId string) bool {
+	return s.jobList.Exists(jobId)
+}
+
+func (s *schedule) GetJob(jobId string) *job  {
+	if s.jobList.Get(jobId) == nil {
+		return nil
+	}
+	return s.jobList.Get(jobId)
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/ryker-w/go-crontab/internal/db/model"
 )
 
-func AddRunningTask(jobId string, clientId string, handler string) (instanceId int, err error) {
+func AddRunningTask(jobId, clientId, handler, params string) (instanceId int, err error) {
 	//
 	var task model.OtterBatchTask
 	task.JobID = jobId
@@ -31,6 +31,7 @@ func AddRunningTask(jobId string, clientId string, handler string) (instanceId i
 	rt.ClientId = clientId
 	rt.ExecutorHandler = handler
 	rt.Status = model.RunningStatusCreated
+	rt.Params = params
 	id, err := app.GetOrm().Context.Insert(&rt)
 	instanceId = int(id)
 	return

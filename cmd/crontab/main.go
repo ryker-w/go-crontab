@@ -10,9 +10,11 @@ import (
 	persistence "github.com/lishimeng/go-orm"
 	"github.com/ryker-w/go-crontab/cmd"
 	"github.com/ryker-w/go-crontab/cmd/crontab/ddd"
+	"github.com/ryker-w/go-crontab/cmd/crontab/static"
 	"github.com/ryker-w/go-crontab/internal/db"
 	"github.com/ryker-w/go-crontab/internal/etc"
 	"github.com/ryker-w/go-crontab/setup"
+	"net/http"
 	"time"
 )
 import _ "github.com/lib/pq"
@@ -64,6 +66,9 @@ func _main() (err error) {
 		builder.EnableDatabase(dbConfig.Build(),
 			db.RegisterTables()...).
 			SetWebLogLevel("debug").
+			EnableStaticWeb(func() http.FileSystem {
+				return http.FS(static.Static)
+			}).
 			EnableWeb(etc.Config.Web.Listen, ddd.Router).
 			ComponentBefore(setup.Setup)
 		return err

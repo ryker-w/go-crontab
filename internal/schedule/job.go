@@ -11,18 +11,19 @@ type Job interface {
 	Run() // 任务执行
 }
 type job struct {
-	jobId      string
-	spec       string
-	clientId   string
-	entryID    cron.EntryID
-	handler    string
-	prevTime   time.Time
-	nextTime   time.Time
+	jobId    string
+	spec     string
+	clientId string
+	entryID  cron.EntryID
+	handler  string
+	prevTime time.Time
+	nextTime time.Time
+	params   string
 }
 
 // Run 任务执行
 func (j *job) run() {
-	_, err := repo.AddRunningTask(j.jobId, j.clientId, j.handler)
+	_, err := repo.AddRunningTask(j.jobId, j.clientId, j.handler, j.params)
 	if err != nil {
 		log.Info(err)
 		log.Info("添加运行任务失败【%s】", j.handler)

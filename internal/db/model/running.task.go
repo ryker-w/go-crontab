@@ -8,6 +8,7 @@ type OtterBatchRunningTask struct {
 	JobId           string `orm:"column(job_id)"`           // 任务ID
 	ClientId        string `orm:"column(client_id)"`        // 任务应用、任务模块
 	ExecutorHandler string `orm:"column(executor_handler)"` // 任务标识。如“HelloWorld”
+	Params          string `orm:"column(params);null"`      // 任务动态参数，json格式
 	app.TableChangeInfo
 }
 

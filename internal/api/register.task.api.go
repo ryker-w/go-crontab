@@ -43,6 +43,7 @@ func RegisterTaskApi(ctx iris.Context) {
 				Name:            handler,
 				ExecutorHandler: handler,
 				Spec:            "",
+				MaxInstanceNum:  10,
 				TableChangeInfo: app.TableChangeInfo{
 					Status: model.Inactive,
 				},
